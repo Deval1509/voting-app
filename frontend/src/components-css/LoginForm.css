@@ -1,0 +1,68 @@
+/* Style for input fields */
+
+/* Style for the login form container */
+.login-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #0a0606;
+  border-radius: 10px;
+  color: #f9f9f9;
+  margin-top: 8%;
+}
+
+.form-input {
+  width: calc(100% - 20px);
+  margin-bottom: 15px;
+  padding: 10px;
+  border: none;
+  padding-right: -80px;
+  border-radius: 5px;
+  color: #333;
+}
+
+/* Style for the password input container */
+.password-input-container {
+  position: relative;
+}
+
+/* Style for the "view password" button */
+.view-password-button {
+  position: absolute;
+  top: 34%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  color: #666;
+  width: fit-content !important;
+}
+
+
+/* Style for the eye icon */
+.view-password-button.show-eye::before {
+  content: '👁️'; 
+}
+
+/* Style for the monkey icon */
+.view-password-button.hide::before {
+  content: '🙈'; 
+}
+
+/* Style for the submit button */
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #c11; 
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Style for the submit button on hover */
+.submit-button:hover {
+  background-color: #a00;
+}
