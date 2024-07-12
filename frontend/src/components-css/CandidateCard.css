@@ -1,0 +1,54 @@
+/* CandidateCard.css */
+
+.candidate-card {
+    background-color: #fff;
+    border: 2px solid #d62828;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  
+  .candidate-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .candidate-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .candidate-name {
+    font-size: 1.2em;
+    color: #d62828;
+    margin: 10px 0;
+  }
+  
+  .candidate-votes {
+    font-size: 1em;
+    color: #333;
+  }
+  
+  @media (max-width: 600px) {
+    .candidate-card {
+      padding: 15px;
+    }
+  
+    .candidate-icon {
+      width: 50px;
+      height: 50px;
+    }
+  
+    .candidate-name {
+      font-size: 1em;
+    }
+  
+    .candidate-votes {
+      font-size: 0.9em;
+    }
+  }
+  

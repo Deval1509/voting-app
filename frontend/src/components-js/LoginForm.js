@@ -1,44 +1,54 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../components-css/LoginForm.css';
 
-const LoginForm = () => {
-  // State variables to store the username, password, and password visibility
-  const [username, setUsername] = useState('');
+const LoginForm = ({ handleLoginSuccess }) => {
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
-  // Event handlers to update the state when inputs change
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
+  const handleIdentifierChange = (e) => {
+    setIdentifier(e.target.value);
   };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
 
-  // Function to toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you can perform actions like sending login credentials to a server
-    console.log('Submitting login with:', { username, password });
-    setUsername('');
-    setPassword('');
+    console.log('Submitting login with:', { identifier, password });
+    try {
+      const response = await axios.post('http://localhost:5000/login', {
+        identifier,
+        password,
+      });
+      const { token } = response.data;
+      console.log('Login successful:', token);
+      handleLoginSuccess(token);
+      setIdentifier('');
+      setPassword('');
+      setError('');
+    } catch (error) {
+      console.error('Error logging in:', error.response?.data || error.message);
+      setError('Invalid username/email or password');
+    }
   };
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
       <div className="form-group">
-        <label htmlFor="username" className="form-label">Username:</label>
+        <label htmlFor="identifier" className="form-label">Username or Email:</label>
         <input
           type="text"
-          id="username"
-          value={username}
-          onChange={handleUsernameChange}
+          id="identifier"
+          value={identifier}
+          onChange={handleIdentifierChange}
           className="form-input"
           required
         />
@@ -62,6 +72,7 @@ const LoginForm = () => {
           ></button>
         </div>
       </div>
+      {error && <p className="error-message">{error}</p>}
       <button type="submit" className="submit-button">Login</button>
     </form>
   );

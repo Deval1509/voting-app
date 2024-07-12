@@ -1,37 +1,48 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../components-css/SignUpForm.css';
-
 
 const SignUpForm = ({ handleAlreadySignedUp }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Submitting signup form:', { username, email, password });
-    setUsername('');
-    setEmail('');
-    setPassword('');
+    try {
+      const response = await axios.post('http://localhost:5000/signup', {
+        username,
+        email,
+        password,
+      });
+      console.log('User registered:', response.data);
+      setUsername('');
+      setEmail('');
+      setPassword('');
+      setSuccess('User registered successfully');
+      setError('');
+    } catch (error) {
+      console.error('Error registering user:', error);
+      setError('Failed to register user');
+      setSuccess('');
+    }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleLoginClick = () => {
-    handleAlreadySignedUp();
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="sign-up-form">
+    <form className="sign-up-form" onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="username" className="form-label">Username:</label>
         <input
           type="text"
           id="username"
+          placeholder="Your first Name"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="form-input"
@@ -68,8 +79,10 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
           ></button>
         </div>
       </div>
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
       <button type="submit" className="submit-button">Sign Up</button>
-      <p>Already have an account? <button type="button" onClick={handleLoginClick} className="login-button">Log in</button></p>
+      <p>Already have an account? <button type="button" onClick={handleAlreadySignedUp} className="login-button">Log in</button></p>
     </form>
   );
 };
