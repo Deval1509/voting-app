@@ -1,63 +1,44 @@
+/* App.css */
+
 .App {
   text-align: center;
+  padding: 10px;
 }
 
-
-/* MyComponent.css */
 .icon {
-  width: 60px;
-  margin-top: 5%;
-  height: auto;
+  width: 80px;
+  height: 80px;
 }
 
 .Title_slant__1eM4c {
-  transform: rotate(-3deg);
-  display: block;
-  margin: .8rem 0 0;
-  margin-top: 5%;
-  margin-left: 27%;
-  line-height: 1;
-  max-width: 600px;
-  font-size: 43px;
-  font-weight: 1000;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  box-sizing: border-box;
-} 
-
-h1{
-  margin-top: 8%;
+  font-size: 1.8em;
+  color: #d62828;
+  margin-top: 10px;
 }
 
-/* Define animation keyframes */
-@keyframes scaleAnimation {
-  0% {
-    transform: scale(2); /* Initial size */
-  }
-  25% {
-    transform: scale(2.25);
-  }
-  50% {
-    transform: scale(2.5); /* Increase size */
-  }
-  75% {
-    transform: scale(2.25);
-  }
-  100% {
-    transform: scale(2); /* Return to initial size */
-  }
-}
-body {
-  overflow: hidden;
-}
-/* Apply animation to the signup button */
 .sign-up-link {
-  padding: 10px 20px;
-  color: #c11; 
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  font-size: 1.2em;
+  color: #333;
   cursor: pointer;
+  text-decoration: underline;
+  margin-top: 10px;
+}
 
-  /* Apply animation properties */
-  animation: scaleAnimation 2s infinite alternate; /* Adjust duration and timing as needed */
+.sign-up-link:hover {
+  color: #d62828;
+}
+
+@media (max-width: 600px) {
+  .icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .Title_slant__1eM4c {
+    font-size: 1.5em;
+  }
+
+  .sign-up-link {
+    font-size: 1em;
+  }
 }

@@ -1,31 +1,22 @@
-import React, { useState } from 'react';import './App.css';
+import React, { useState } from 'react';
+import './App.css';
 import BarciIcon from './logo/barci-Icon.svg';
 import SignUpForm from './components-js/SignUpForm';
 import LoginForm from './components-js/LoginForm';
-import HomePage from './HomePage'; 
-
-
+import VoteForm from './components-js/VoteForm'; // Import the VoteForm component
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showSignUpForm, setShowSignUpForm] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
 
-  // useEffect(() => {
-  //   const Keycloak = keycloak(); 
-  //   Keycloak.init({ onLoad: 'login-required' }).then(authenticated => {
-  //     setIsLoggedIn(authenticated); // Update the isLoggedIn state based on authentication result
-  //   });
-  // }, []);
-
   const handleAlreadySignedUp = () => {
-    setShowSignUpForm(false); 
+    setShowSignUpForm(false);
     setShowLoginForm(true);
   };
 
-  // Define the handleLoginSuccess function
   const handleLoginSuccess = () => {
-    setIsLoggedIn(true); 
+    setIsLoggedIn(true);
   };
 
   return (
@@ -33,7 +24,7 @@ function App() {
       <img src={BarciIcon} alt="Barci Icon" className="icon" />
       <span className="Title_slant__1eM4c">Greenwich - Cutty Sark</span>
       {isLoggedIn ? (
-        <HomePage />
+        <VoteForm userId="123" /> // Pass the userId or other necessary props
       ) : (
         <>
           {showSignUpForm ? (
