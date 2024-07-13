@@ -13,7 +13,7 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/signup', {
+      const response = await axios.post('http://192.168.1.214:5000/signup', { // Use your local IP address
         username,
         email,
         password,

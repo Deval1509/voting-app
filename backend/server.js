@@ -9,7 +9,9 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'https://vote-nom.online'
+  origin: 'https://vote-nom.online', // Ensure this is your frontend URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true
 }));
 app.use(bodyParser.json());
 
@@ -138,7 +140,6 @@ app.get('/users', (req, res) => {
   });
 });
 
-
 // Route to handle vote submission
 app.post('/vote', (req, res) => {
   const { voterId, candidateId } = req.body;
@@ -192,6 +193,6 @@ app.post('/vote', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
