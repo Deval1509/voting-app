@@ -8,7 +8,9 @@ const jwt = require('jsonwebtoken');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://vote-nom.online'
+}));
 app.use(bodyParser.json());
 
 // MySQL connection
