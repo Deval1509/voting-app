@@ -48,3 +48,11 @@ Configure environment variables and settings for production deployment.
 Monitor and Maintain:
 Monitor your deployed application for errors, performance issues, and security vulnerabilities.
 Regularly update dependencies, apply security patches, and implement best practices for maintaining your application.
+
+
+
+
+
+Create fake employee numbers,
+Add employee number field on sign up page and replace it with email address field
+Add animation to to top 3 winners, hide the vote count for rest of the candidates

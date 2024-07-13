@@ -1,0 +1,16 @@
+exclude:
+  - "node_modules"
+  - "backend/node_modules"
+  - "frontend/node_modules"
+  - "build"
+  - "dist"
+  - "test"
+  - "tests"
+  - ".gitignore"
+  - ".npmignore"
+  - "README.md"
+  - "LICENSE"
+  - "package.json"
+  - "package-lock.json"
+  - "yarn.lock"
+
