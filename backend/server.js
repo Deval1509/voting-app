@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mysql = require('mysql');
+const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -15,20 +15,52 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
-// MySQL connection
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'Deval',
-  password: 'Deval.0119',
-  database: 'votingapp',
+// Initialize SQLite database
+const db = new sqlite3.Database('./votingapp.db', (err) => {
+  if (err) {
+    console.error(err.message);
+  } else {
+    console.log('Connected to the SQLite database.');
+  }
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-  }
-  console.log('Connected to MySQL');
+// Create tables
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS employees (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      employee_number TEXT NOT NULL,
+      name TEXT NOT NULL
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      email TEXT NOT NULL,
+      password TEXT NOT NULL,
+      employee_number TEXT NOT NULL,
+      FOREIGN KEY (employee_number) REFERENCES employees(employee_number)
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS candidates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL
+    )
+  `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS votes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      voter_id INTEGER,
+      candidate_id INTEGER,
+      FOREIGN KEY (voter_id) REFERENCES users(id),
+      FOREIGN KEY (candidate_id) REFERENCES candidates(id)
+    )
+  `);
 });
 
 // Route to handle sign up
@@ -45,12 +77,12 @@ app.post('/signup', async (req, res) => {
     console.log('Hashed password:', hashedPassword);
 
     const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-    db.query(sql, [username, email, hashedPassword], (err, result) => {
+    db.run(sql, [username, email, hashedPassword], function(err) {
       if (err) {
         console.error('Error inserting user:', err);
         return res.status(500).send('Server error');
       }
-      console.log('User registered:', result);
+      console.log('User registered:', this.lastID);
       res.status(200).send('User registered');
     });
   } catch (error) {
@@ -71,18 +103,17 @@ app.post('/login', (req, res) => {
   }
 
   const sql = 'SELECT * FROM users WHERE username = ? OR email = ?';
-  db.query(sql, [identifier, identifier], async (err, results) => {
+  db.get(sql, [identifier, identifier], async (err, user) => {
     if (err) {
       console.error('Error querying user:', err);
       return res.status(500).send('Server error');
     }
 
-    if (results.length === 0) {
+    if (!user) {
       console.log('No user found with this username/email:', identifier);
       return res.status(400).send('Invalid username/email or password');
     }
 
-    const user = results[0];
     console.log('User found:', user);
 
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -131,7 +162,7 @@ app.get('/users', (req, res) => {
     `;
   }
 
-  db.query(sql, (err, results) => {
+  db.all(sql, (err, results) => {
     if (err) {
       console.error('Error fetching users:', err);
       return res.status(500).send('Server error');
@@ -156,13 +187,13 @@ app.post('/vote', (req, res) => {
 
   // Check if the user has already voted within the last month
   const checkVoteSQL = 'SELECT last_vote_date FROM users WHERE id = ?';
-  db.query(checkVoteSQL, [voterId], (err, results) => {
+  db.get(checkVoteSQL, [voterId], (err, result) => {
     if (err) {
       console.error('Error checking last vote date:', err);
       return res.status(500).send('Server error');
     }
 
-    const lastVoteDate = results[0]?.last_vote_date;
+    const lastVoteDate = result?.last_vote_date;
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
@@ -172,20 +203,20 @@ app.post('/vote', (req, res) => {
 
     // Proceed with voting
     const voteSQL = 'INSERT INTO votes (voter_id, candidate_id) VALUES (?, ?)';
-    db.query(voteSQL, [voterId, candidateId], (err, result) => {
+    db.run(voteSQL, [voterId, candidateId], function(err) {
       if (err) {
         console.error('Error submitting vote:', err);
         return res.status(500).send('Server error');
       }
 
       // Update the last vote date
-      const updateVoteDateSQL = 'UPDATE users SET last_vote_date = NOW() WHERE id = ?';
-      db.query(updateVoteDateSQL, [voterId], (err, result) => {
+      const updateVoteDateSQL = 'UPDATE users SET last_vote_date = CURRENT_TIMESTAMP WHERE id = ?';
+      db.run(updateVoteDateSQL, [voterId], (err) => {
         if (err) {
           console.error('Error updating last vote date:', err);
           return res.status(500).send('Server error');
         }
-        console.log('Vote submitted and last vote date updated:', result);
+        console.log('Vote submitted and last vote date updated:', this.changes);
         res.status(200).send('Vote submitted successfully');
       });
     });

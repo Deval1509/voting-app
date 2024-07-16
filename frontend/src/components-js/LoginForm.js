@@ -24,7 +24,7 @@ const LoginForm = ({ handleLoginSuccess }) => {
     e.preventDefault();
     console.log('Submitting login with:', { identifier, password });
     try {
-      const response = await axios.post('http://192.168.1.214:5000/login', { // Use your local IP address
+      const response = await axios.post('http://192.168.1.214:5000/login', {
         identifier,
         password,
       });
