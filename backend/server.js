@@ -1,77 +1,32 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const sqlite3 = require('sqlite3').verbose();
+const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const app = express();
 
 // Middleware
-const allowedOrigins = ['http://localhost:3000', 'https://deval1509.github.io/vote'];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true
+  origin: 'http://localhost:3000',
 }));
-
 app.use(bodyParser.json());
 
-// Initialize SQLite database
-const db = new sqlite3.Database('./votingapp.db', (err) => {
-  if (err) {
-    console.error(err.message);
-  } else {
-    console.log('Connected to the SQLite database.');
-  }
+// MySQL connection
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'Deval',
+  password: 'Deval.0119',
+  database: 'votingapp',
 });
 
-// Create tables
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS employees (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      employee_number TEXT NOT NULL,
-      name TEXT NOT NULL
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL,
-      email TEXT NOT NULL,
-      password TEXT NOT NULL,
-      employee_number TEXT NOT NULL,
-      FOREIGN KEY (employee_number) REFERENCES employees(employee_number)
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS candidates (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS votes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      voter_id INTEGER,
-      candidate_id INTEGER,
-      FOREIGN KEY (voter_id) REFERENCES users(id),
-      FOREIGN KEY (candidate_id) REFERENCES candidates(id)
-    )
-  `);
+db.connect((err) => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+  }
+  console.log('Connected to MySQL');
 });
 
 // Route to handle sign up
@@ -88,12 +43,12 @@ app.post('/signup', async (req, res) => {
     console.log('Hashed password:', hashedPassword);
 
     const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-    db.run(sql, [username, email, hashedPassword], function(err) {
+    db.query(sql, [username, email, hashedPassword], (err, result) => {
       if (err) {
         console.error('Error inserting user:', err);
         return res.status(500).send('Server error');
       }
-      console.log('User registered:', this.lastID);
+      console.log('User registered:', result);
       res.status(200).send('User registered');
     });
   } catch (error) {
@@ -114,17 +69,18 @@ app.post('/login', (req, res) => {
   }
 
   const sql = 'SELECT * FROM users WHERE username = ? OR email = ?';
-  db.get(sql, [identifier, identifier], async (err, user) => {
+  db.query(sql, [identifier, identifier], async (err, results) => {
     if (err) {
       console.error('Error querying user:', err);
       return res.status(500).send('Server error');
     }
 
-    if (!user) {
+    if (results.length === 0) {
       console.log('No user found with this username/email:', identifier);
       return res.status(400).send('Invalid username/email or password');
     }
 
+    const user = results[0];
     console.log('User found:', user);
 
     const passwordMatch = await bcrypt.compare(password, user.password);
@@ -173,7 +129,7 @@ app.get('/users', (req, res) => {
     `;
   }
 
-  db.all(sql, (err, results) => {
+  db.query(sql, (err, results) => {
     if (err) {
       console.error('Error fetching users:', err);
       return res.status(500).send('Server error');
@@ -181,6 +137,7 @@ app.get('/users', (req, res) => {
     res.status(200).json({ users: results, isFirstDay });
   });
 });
+
 
 // Route to handle vote submission
 app.post('/vote', (req, res) => {
@@ -198,13 +155,13 @@ app.post('/vote', (req, res) => {
 
   // Check if the user has already voted within the last month
   const checkVoteSQL = 'SELECT last_vote_date FROM users WHERE id = ?';
-  db.get(checkVoteSQL, [voterId], (err, result) => {
+  db.query(checkVoteSQL, [voterId], (err, results) => {
     if (err) {
       console.error('Error checking last vote date:', err);
       return res.status(500).send('Server error');
     }
 
-    const lastVoteDate = result?.last_vote_date;
+    const lastVoteDate = results[0]?.last_vote_date;
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
@@ -214,20 +171,20 @@ app.post('/vote', (req, res) => {
 
     // Proceed with voting
     const voteSQL = 'INSERT INTO votes (voter_id, candidate_id) VALUES (?, ?)';
-    db.run(voteSQL, [voterId, candidateId], function(err) {
+    db.query(voteSQL, [voterId, candidateId], (err, result) => {
       if (err) {
         console.error('Error submitting vote:', err);
         return res.status(500).send('Server error');
       }
 
       // Update the last vote date
-      const updateVoteDateSQL = 'UPDATE users SET last_vote_date = CURRENT_TIMESTAMP WHERE id = ?';
-      db.run(updateVoteDateSQL, [voterId], (err) => {
+      const updateVoteDateSQL = 'UPDATE users SET last_vote_date = NOW() WHERE id = ?';
+      db.query(updateVoteDateSQL, [voterId], (err, result) => {
         if (err) {
           console.error('Error updating last vote date:', err);
           return res.status(500).send('Server error');
         }
-        console.log('Vote submitted and last vote date updated:', this.changes);
+        console.log('Vote submitted and last vote date updated:', result);
         res.status(200).send('Vote submitted successfully');
       });
     });
@@ -235,6 +192,6 @@ app.post('/vote', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

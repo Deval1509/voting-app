@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://deval1509.github.io/vote/",
   "scripts": {
-    "start": "node server.js",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
