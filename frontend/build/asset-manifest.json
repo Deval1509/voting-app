@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/vote/static/css/main.43cf0ae9.css",
-    "main.js": "/vote/static/js/main.868d62da.js",
-    "static/js/453.9b3d064a.chunk.js": "/vote/static/js/453.9b3d064a.chunk.js",
-    "static/media/barci-Icon.svg": "/vote/static/media/barci-Icon.5e186410cbdbe4074becd07237585bb6.svg",
-    "index.html": "/vote/index.html",
-    "main.43cf0ae9.css.map": "/vote/static/css/main.43cf0ae9.css.map",
-    "main.868d62da.js.map": "/vote/static/js/main.868d62da.js.map",
-    "453.9b3d064a.chunk.js.map": "/vote/static/js/453.9b3d064a.chunk.js.map"
+    "main.css": "/voting-app/static/css/main.d4abb8b0.css",
+    "main.js": "/voting-app/static/js/main.88b6918b.js",
+    "static/js/453.9b3d064a.chunk.js": "/voting-app/static/js/453.9b3d064a.chunk.js",
+    "static/media/barci-Icon.svg": "/voting-app/static/media/barci-Icon.5e186410cbdbe4074becd07237585bb6.svg",
+    "index.html": "/voting-app/index.html",
+    "main.d4abb8b0.css.map": "/voting-app/static/css/main.d4abb8b0.css.map",
+    "main.88b6918b.js.map": "/voting-app/static/js/main.88b6918b.js.map",
+    "453.9b3d064a.chunk.js.map": "/voting-app/static/js/453.9b3d064a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.43cf0ae9.css",
-    "static/js/main.868d62da.js"
+    "static/css/main.d4abb8b0.css",
+    "static/js/main.88b6918b.js"
   ]
 }
