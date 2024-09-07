@@ -1,24 +1,38 @@
-/* Style for input fields */
-
 /* Style for the login form container */
 .login-form {
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: #0a0606;
-  border-radius: 10px;
+  padding: 30px;
+  background-color: #1b1b1b; /* Slightly softer black for a modern look */
+  border-radius: 15px; /* More rounded corners */
   color: #f9f9f9;
-  margin-top: 8%;
+  margin-top: 10%; /* More space at the top */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for elevation */
+  text-align: center;
 }
 
+.login-form h2 {
+  color: #ff4b5c; /* Use same red for consistency */
+  margin-bottom: 20px;
+}
+
+/* Style for input fields */
 .form-input {
-  width: calc(100% - 20px);
-  margin-bottom: 15px;
-  padding: 10px;
-  border: none;
-  padding-right: -80px;
+  width: calc(100% - 30px);
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid #555;
   border-radius: 5px;
+  background-color: #fff; /* Light background for better contrast */
   color: #333;
+  transition: border-color 0.3s;
+}
+
+/* Style for input focus */
+.form-input:focus {
+  outline: none;
+  border-color: #ff4b5c;
+  box-shadow: 0 0 5px rgba(255, 75, 92, 0.5); /* Slight glow on focus */
 }
 
 /* Style for the password input container */
@@ -29,40 +43,65 @@
 /* Style for the "view password" button */
 .view-password-button {
   position: absolute;
-  top: 34%;
+  top: 50%;
+  right: 12px;
   transform: translateY(-50%);
   background-color: transparent;
   border: none;
   padding: 5px;
   cursor: pointer;
   color: #666;
-  width: fit-content !important;
+  font-size: 1.2em;
 }
 
-
-/* Style for the eye icon */
+/* Style for the eye and monkey icons */
 .view-password-button.show-eye::before {
-  content: '👁️'; 
+  content: '👁️';
 }
 
-/* Style for the monkey icon */
 .view-password-button.hide::before {
-  content: '🙈'; 
+  content: '🙈';
 }
 
-/* Style for the submit button */
+/* Style for submit button */
 .submit-button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: none;
   border-radius: 5px;
-  background-color: #c11; 
-  color: white;
-  font-size: 16px;
+  background-color: #ff4b5c;
+  color: #fff;
+  font-size: 1.2em;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease-in-out;
 }
 
-/* Style for the submit button on hover */
+/* Submit button hover effect */
 .submit-button:hover {
-  background-color: #a00;
+  background-color: #e03c4f;
+  transform: translateY(-3px);
+}
+
+/* Error message styling */
+.error-message {
+  color: #dc3545;
+  font-size: 0.9em;
+  margin-top: 10px;
+  font-family: Arial, sans-serif;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .login-form {
+    padding: 20px;
+    margin-top: 15%;
+  }
+
+  .form-input {
+    width: calc(100% - 20px);
+  }
+
+  .login-form h2 {
+    font-size: 1.5em;
+  }
 }

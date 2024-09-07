@@ -13,7 +13,7 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://192.168.1.214:5000/signup', {
+      const response = await axios.post('http://localhost:5000/signup', {
         username,
         email,
         password,
@@ -37,6 +37,8 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
 
   return (
     <form className="sign-up-form" onSubmit={handleSubmit}>
+      <h2>Sign Up</h2>
+      
       <div className="form-group">
         <label htmlFor="username" className="form-label">Username:</label>
         <input
@@ -49,6 +51,7 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
           required
         />
       </div>
+      
       <div className="form-group">
         <label htmlFor="email" className="form-label">Email:</label>
         <input
@@ -57,9 +60,11 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="form-input"
+          placeholder="Your email"
           required
         />
       </div>
+      
       <div className="form-group password-input-container">
         <label htmlFor="password" className="form-label">Password:</label>
         <div className="password-input-container">
@@ -69,19 +74,24 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="form-input"
+            placeholder="Your password"
             required
           />
           <button
             type="button"
             className={`view-password-button ${showPassword ? 'hide' : 'show-eye'}`}
             onClick={togglePasswordVisibility}
-            style={{ display: 'inline-block' }}
-          ></button>
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          />
         </div>
       </div>
+      
+      {/* Display error or success messages */}
       {error && <p className="error-message">{error}</p>}
       {success && <p className="success-message">{success}</p>}
+      
       <button type="submit" className="submit-button">Sign Up</button>
+
       <p>Already have an account? <button type="button" onClick={handleAlreadySignedUp} className="login-button">Log in</button></p>
     </form>
   );

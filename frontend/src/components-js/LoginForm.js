@@ -24,7 +24,7 @@ const LoginForm = ({ handleLoginSuccess }) => {
     e.preventDefault();
     console.log('Submitting login with:', { identifier, password });
     try {
-      const response = await axios.post('http://192.168.1.214:5000/login', {
+      const response = await axios.post('http://localhost:5000/login', {
         identifier,
         password,
       });
@@ -42,6 +42,8 @@ const LoginForm = ({ handleLoginSuccess }) => {
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
+      <h2>Login</h2>
+      
       <div className="form-group">
         <label htmlFor="identifier" className="form-label">Username or Email:</label>
         <input
@@ -50,9 +52,11 @@ const LoginForm = ({ handleLoginSuccess }) => {
           value={identifier}
           onChange={handleIdentifierChange}
           className="form-input"
+          placeholder="Enter your username or email"
           required
         />
       </div>
+      
       <div className="form-group">
         <label htmlFor="password" className="form-label">Password:</label>
         <div className="password-input-container">
@@ -62,17 +66,20 @@ const LoginForm = ({ handleLoginSuccess }) => {
             value={password}
             onChange={handlePasswordChange}
             className="form-input"
+            placeholder="Enter your password"
             required
           />
           <button
             type="button"
             className={`view-password-button ${showPassword ? 'hide' : 'show-eye'}`}
             onClick={togglePasswordVisibility}
-            style={{ display: 'inline-block' }}
-          ></button>
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          />
         </div>
       </div>
+      
       {error && <p className="error-message">{error}</p>}
+      
       <button type="submit" className="submit-button">Login</button>
     </form>
   );

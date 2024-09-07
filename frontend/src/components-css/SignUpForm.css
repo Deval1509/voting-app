@@ -1,12 +1,60 @@
 /* Style for the form container */
 .sign-up-form {
     max-width: 400px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #0a0606;
-    border-radius: 10px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    background-color: #1b1b1b; /* Slightly softer black for a modern look */
+    border-radius: 15px; /* More rounded corners */
     color: #f9f9f9;
-    margin-top: 8%;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for elevation */
+    margin-top: 10%; /* More space at the top */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Hover effect for form */
+.sign-up-form:hover {
+    transform: translateY(-5px); /* Slight lift on hover for engagement */
+}
+
+/* Style for input containers */
+.input-container {
+    margin-bottom: 20px;
+}
+
+/* Style for form headings */
+.sign-up-form h2 {
+    text-align: center;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: #ff4b5c; /* A bold, engaging red */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Style for labels */
+.sign-up-form label {
+    font-size: 0.9em;
+    color: #ccc;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Style for input fields */
+.sign-up-form input {
+    width: calc(100% - 30px); /* Adjust width to fit within container */
+    padding: 12px;
+    border: 1px solid #555; /* Softer border */
+    border-radius: 5px;
+    background-color: #fff; /* Light background for better contrast */
+    color: #333;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+/* Style for input fields on focus */
+.sign-up-form input:focus {
+    outline: none;
+    border-color: #ff4b5c; /* Highlight with the primary color */
+    box-shadow: 0 0 5px rgba(255, 75, 92, 0.5); /* Glowing effect on focus */
 }
 
 /* Style for the password input container */
@@ -17,7 +65,7 @@
 /* Style for the "view password" button */
 .view-password-button {
     position: absolute;
-    top: 34%;
+    top: 50%;
     right: 12px;
     transform: translateY(-50%);
     background-color: transparent !important;
@@ -25,6 +73,7 @@
     padding: 5px;
     cursor: pointer;
     color: #666;
+    font-size: 1.2em;
 }
 
 /* Style for the "view password" button icon */
@@ -32,49 +81,57 @@
     content: '👁️'; /* Unicode eye icon */
 }
 
-/* Style for the "view password" button text */
+/* Style for the "view password" button when hiding password */
 .view-password-button.hide::before {
     content: '🙈'; /* Unicode hidden face icon */
-}
-
-/* Style for input fields */
-.sign-up-form input {
-    width: calc(100% - 30px); /* Adjust width to fit within container */
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    color: #333; /* Adjust text color */
-    background-color: #f9f9f9; /* Adjust background color */
 }
 
 /* Style for submit button */
 .sign-up-form .submit-button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border: none;
     border-radius: 5px;
-    background-color: #c11;
+    background-color: #ff4b5c;
     color: #fff;
-    font-size: 16px;
+    font-size: 1.2em;
     cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease-in-out;
 }
 
 /* Style for submit button on hover */
 .sign-up-form .submit-button:hover {
-    background-color: #a00;
+    background-color: #e03c4f;
+    transform: translateY(-3px);
 }
 
 /* Style for the "Log in" button */
 .sign-up-form p button {
     background-color: transparent;
     border: none;
-    color: #c11; /* Adjust text color */
+    color: #ff4b5c;
     text-decoration: underline;
     cursor: pointer;
 }
 
 /* Style for the "Log in" button on hover */
 .sign-up-form p button:hover {
-    color: #a00; /* Adjust text color on hover */
+    color: #e03c4f;
+    text-decoration: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .sign-up-form {
+        padding: 20px 15px;
+        margin-top: 15%;
+    }
+
+    .sign-up-form input {
+        width: calc(100% - 20px);
+    }
+
+    .sign-up-form h2 {
+        font-size: 1.5em;
+    }
 }
