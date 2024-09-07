@@ -2,7 +2,7 @@
   "name": "voting-app",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://deval1509.github.io/voting-app/",
+  "homepage": "https://Deval1509.github.io/voting-app",
   "scripts": {
     "start": "node server.js",
     "build": "react-scripts build",
