@@ -20,25 +20,46 @@ const LoginForm = ({ handleLoginSuccess }) => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('Submitting login with:', { identifier, password });
-    try {
-      const response = await axios.post('http://localhost:5000/login', {
-        identifier,
-        password,
-      });
-      const { token } = response.data;
-      console.log('Login successful:', token);
-      handleLoginSuccess(token);
+  const handleSubmit = (e) => {
+    e.preventDefault();  
+    
+    // Simulate local login for now
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const user = users.find(
+      (user) => (user.username === identifier || user.email === identifier) && user.password === password
+    );
+
+    if (user) {
+      console.log('Login successful');
+      handleLoginSuccess(user);
       setIdentifier('');
       setPassword('');
       setError('');
-    } catch (error) {
-      console.error('Error logging in:', error.response?.data || error.message);
+    } else {
       setError('Invalid username/email or password');
     }
+
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log('Submitting login with:', { identifier, password });
+  //   try {
+  //     const response = await axios.post('http://localhost:5000/login', {
+  //       identifier,
+  //       password,
+  //     });
+  //     const { token } = response.data;
+  //     console.log('Login successful:', token);
+  //     handleLoginSuccess(token);
+  //     setIdentifier('');
+  //     setPassword('');
+  //     setError('');
+  //   } catch (error) {
+  //     console.error('Error logging in:', error.response?.data || error.message);
+  //     setError('Invalid username/email or password');
+  //   }
   };
+  
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>

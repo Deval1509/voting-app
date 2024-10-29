@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import CandidateCard from './CandidateCard';
 import '../components-css/VoteForm.css';
 
+const VOTING_PERIOD_DAYS = 20; // 20 days
+
 const VoteForm = ({ userId }) => {
   const [candidates, setCandidates] = useState([]);
-  const [isFirstDay, setIsFirstDay] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
-  // Function to fetch candidates
-  const fetchCandidates = async () => {
+  // Fetch candidates from localStorage
+  const fetchCandidates = () => {
     try {
-      const response = await axios.get('http://localhost:5000/users');
-      setCandidates(response.data.users);
-      setIsFirstDay(response.data.isFirstDay);
-      setError('');
+      const storedCandidates = JSON.parse(localStorage.getItem('candidates')) || [];
+
+      if (storedCandidates.length > 0) {
+        setCandidates(storedCandidates);
+        setError('');
+      } else {
+        setError('No candidates available');
+        setCandidates([]);
+      }
     } catch (err) {
+      console.error('Failed to load candidates:', err);
       setError('Failed to fetch candidates');
       setCandidates([]);
-      setIsFirstDay(false);
     }
   };
 
@@ -27,19 +32,63 @@ const VoteForm = ({ userId }) => {
     fetchCandidates();
   }, []);
 
-  const handleVote = async (candidateId) => {
-    try {
-      const response = await axios.post('http://localhost:5000/vote', {
-        voterId: userId,
-        candidateId: candidateId,
-      });
-      setSuccess('Vote submitted successfully');
-      setError('');
-      fetchCandidates();
-    } catch (err) {
-      setError(err.response?.data || 'Failed to submit vote');
-      setSuccess('');
+  // Get user's voting record from localStorage
+  const getUserVotingRecord = () => {
+    const votingRecords = JSON.parse(localStorage.getItem('votingRecords')) || {};
+    return votingRecords[userId] || {};
+  };
+
+  // Save user's voting record to localStorage
+  const saveUserVotingRecord = (votingRecord) => {
+    const votingRecords = JSON.parse(localStorage.getItem('votingRecords')) || {};
+    votingRecords[userId] = votingRecord;
+    localStorage.setItem('votingRecords', JSON.stringify(votingRecords));
+  };
+
+  // Check if the user is eligible to vote for a specific candidate
+  const canUserVoteForCandidate = (candidateId) => {
+    const userRecord = getUserVotingRecord();
+    const candidateVoteRecord = userRecord[candidateId] || null;
+
+    // If there's no record of voting for this candidate, user can vote
+    if (!candidateVoteRecord) {
+      return true;
     }
+
+    // User has voted before, check if 20 days have passed
+    const lastVotedDate = new Date(candidateVoteRecord);
+    const currentDate = new Date();
+    const differenceInTime = currentDate.getTime() - lastVotedDate.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+
+    // Check if 20 days have passed since the last vote for this candidate
+    return differenceInDays >= VOTING_PERIOD_DAYS;
+  };
+
+  const handleVote = (candidateId) => {
+    if (!canUserVoteForCandidate(candidateId)) {
+      setError(`You have already voted for this candidate. You can vote again after ${VOTING_PERIOD_DAYS} days.`);
+      return;
+    }
+
+    const updatedCandidates = candidates.map(candidate =>
+      candidate.id === candidateId
+        ? { ...candidate, votes: candidate.votes + 1 }
+        : candidate
+    );
+
+    setCandidates(updatedCandidates);
+    setSuccess('Vote submitted successfully');
+    setError('');
+
+    // Update candidates in localStorage
+    localStorage.setItem('candidates', JSON.stringify(updatedCandidates));
+
+    // Update the user's voting record for this candidate with the current timestamp
+    const currentDate = new Date().toISOString();
+    const userVotingRecord = getUserVotingRecord();
+    userVotingRecord[candidateId] = currentDate;
+    saveUserVotingRecord(userVotingRecord);
   };
 
   return (
@@ -53,8 +102,7 @@ const VoteForm = ({ userId }) => {
             <CandidateCard
               key={candidate.id}
               candidate={candidate}
-              onVote={handleVote}
-              showVotes={isFirstDay}
+              onVote={() => handleVote(candidate.id)}
             />
           ))
         ) : (

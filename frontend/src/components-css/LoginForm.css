@@ -43,7 +43,7 @@
 /* Style for the "view password" button */
 .view-password-button {
   position: absolute;
-  top: 50%;
+  top: 30%;
   right: 12px;
   transform: translateY(-50%);
   background-color: transparent;
