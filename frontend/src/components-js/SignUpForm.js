@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import '../components-css/SignUpForm.css';
 
 const SignUpForm = ({ handleAlreadySignedUp }) => {
@@ -12,13 +12,29 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newUser = { id: uuidv4(), username, email, password };  // Create a new user object
     try {
-      const response = await axios.post('http://localhost:5000/signup', {
-        username,
-        email,
-        password,
-      });
-      console.log('User registered:', response.data);
+      // Retrieve the current array of users or initialize it if not present
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+  
+      // Check if the user already exists based on username or email
+      const exists = users.some(user => user.username === username || user.email === email);
+      if (exists) {
+        setError('Username or email already exists');
+        setSuccess('');
+        return; // Stop the function if the user already exists
+      }
+  
+      // Add the new user to the array
+      users.push(newUser);
+      
+      // Store the updated array back into local storage
+      localStorage.setItem('users', JSON.stringify(users));
+
+      // Call handleNewUser to add the new user as a candidate
+      handleNewUser(newUser);
+  
+      // Reset form fields and set success message
       setUsername('');
       setEmail('');
       setPassword('');
@@ -29,6 +45,26 @@ const SignUpForm = ({ handleAlreadySignedUp }) => {
       setError('Failed to register user');
       setSuccess('');
     }
+  };
+
+  // Function to add a new user as a candidate
+  const handleNewUser = (newUser) => {
+    // Fetch existing candidates from localStorage
+    const candidates = JSON.parse(localStorage.getItem('candidates')) || [];
+    
+    // Check if the new user is already a candidate; if not, add them
+    const userAlreadyCandidate = candidates.some(candidate => candidate.username === newUser.username);
+    
+    if (!userAlreadyCandidate) {
+      candidates.push({
+        id: newUser.id,
+        username: newUser.username,
+        votes: 0,
+      });
+    }
+    
+    // Save updated candidates back to localStorage
+    localStorage.setItem('candidates', JSON.stringify(candidates));
   };
 
   const togglePasswordVisibility = () => {
